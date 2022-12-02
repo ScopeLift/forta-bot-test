@@ -7,6 +7,8 @@ import {
   BlockEvent
 } from 'forta-agent'
 
+import axios from 'axios';
+
 const { keccak256, toUtf8Bytes } = ethers.utils;
 
 const usdc = "0x000000000000000000000000A0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48".toLowerCase();
@@ -31,17 +33,27 @@ const handleTransaction: HandleTransaction = async (txEvent: TransactionEvent) =
 
   console.log(`Transaction ${txEvent.transaction.hash} has ${Object.keys(txEvent.addresses).length} addresses`);
   console.log(`Transaction has ${txEvent.logs.length} logs`);
-  txEvent.logs.forEach(log => {
+  txEvent.logs.forEach(async (log) =>  {
     const topics = log.topics;
     if ( (topics.length == 3) && (topics[0] == transferSig) ) {
       console.log(`We have an ERC20 transfer function`);
       console.log(`from address is: ${topics[1]}`);
       console.log(`dest address is: ${topics[2]}`);
       if (targetList.includes(topics[1])) {
-        console.log(`Found an ERC20 transfer from a member of the target list: ${topics[1]} in topic 1 `)
+        console.log(`Found an ERC20 transfer from a member of the target list: ${topics[1]} in topic 1 `);
+        const res = await axios.post('http://127.0.0.1:8000', { txhash: `${txEvent.transaction.hash}` }, {
+          headers: {
+            'content-type': 'text/json'
+          }
+        });
       }
       if (targetList.includes(topics[2])) {
         console.log(`Found an ERC20 transfer to   a member of the target list: ${topics[2]} in topic 2 `)
+        const res = await axios.post('http://127.0.0.1:8000', { txhash: `${txEvent.transaction.hash}` }, {
+          headers: {
+            'content-type': 'text/json'
+          }
+        });
       }
     }
   });
