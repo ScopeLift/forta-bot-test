@@ -2,7 +2,7 @@
 
 ## Description
 
-This agent detects transactions containing addresses in a hard-coded target list.
+This agent is proof of concept implementation of the Endoament Event Listener and detects transactions (including those containing logs with ERC20 transfers) containing addresses in a hard-coded target list.
 
 ## Supported Chains
 
@@ -10,13 +10,9 @@ This agent detects transactions containing addresses in a hard-coded target list
 
 ## Alerts
 
-Describe each of the type of alerts fired by this agent
-
-- FORTA-3
-  - Fired when a transaction contains an address in the hard-coded target list.
-  - Severity is always set to "info" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+In an Endaoment implementation.. the hard-coded list would be Endaoment Entity addresses
+and when a match was found a POST would be done to an Endaoment API endpoint, and the post
+would contain the transaction hash of the matching transaction.
 
 ## Installation
 
