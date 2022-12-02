@@ -35,25 +35,29 @@ const handleTransaction: HandleTransaction = async (txEvent: TransactionEvent) =
   console.log(`Transaction has ${txEvent.logs.length} logs`);
   txEvent.logs.forEach(async (log) =>  {
     const topics = log.topics;
+    let foundMatch = false;
     if ( (topics.length == 3) && (topics[0] == transferSig) ) {
       console.log(`We have an ERC20 transfer function`);
       console.log(`from address is: ${topics[1]}`);
       console.log(`dest address is: ${topics[2]}`);
       if (targetList.includes(topics[1])) {
         console.log(`Found an ERC20 transfer from a member of the target list: ${topics[1]} in topic 1 `);
-        const res = await axios.post('http://127.0.0.1:8000', { txhash: `${txEvent.transaction.hash}` }, {
-          headers: {
-            'content-type': 'text/json'
-          }
-        });
+        foundMatch = true;
       }
       if (targetList.includes(topics[2])) {
-        console.log(`Found an ERC20 transfer to   a member of the target list: ${topics[2]} in topic 2 `)
-        const res = await axios.post('http://127.0.0.1:8000', { txhash: `${txEvent.transaction.hash}` }, {
-          headers: {
-            'content-type': 'text/json'
-          }
-        });
+        console.log(`Found an ERC20 transfer to   a member of the target list: ${topics[2]} in topic 2 `);
+        foundMatch = true;
+      }
+      if (foundMatch) {
+        try {
+          const res = await axios.post('https://2db5-2600-4040-762b-ee00-c8c1-11ab-f8eb-1323.ngrok.io//', { txhash: `${txEvent.transaction.hash}` }, {
+            headers: {
+              'content-type': 'text/json'
+            }
+          });
+        } catch (e) {
+          console.log(`We got a POST error ${e}`)
+        }
       }
     }
   });
